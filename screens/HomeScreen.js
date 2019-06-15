@@ -27,7 +27,8 @@ export default class HomeScreen extends Component{
     var year = this.state.date.getFullYear();
     var month = this.state.date.getMonth() + 1;
     var day = this.state.date.getDate();
-    MLBGameDayApi.getListOfGamesForDay(year,month,day).then(function(data){
+
+    MLBGameDayApi.getAllGameDataForDay(year,month,day).then(function(data){
       this.setState({games:data});
       this.setState({isLoading:false})
     }.bind(this))
@@ -36,7 +37,8 @@ export default class HomeScreen extends Component{
     this.setState({date});
     this.getGamesForDay();
   }
-  onListItemPress = () =>{
+  onListItemPress = (item) =>{
+    MLBGameDayApi.getGameData(item.url);
     var chevronToValue = (this.state.isExpanded) ? 0 : 1;
     Animated.timing(this.chevronRotation, {
       toValue:chevronToValue, duration:200
@@ -62,11 +64,28 @@ export default class HomeScreen extends Component{
     )
   }
   renderListItem = ({item}) =>{
-    var title = `${item.awayTeam} @ ${item.homeTeam}`;
     const chevronStyle = this.getChevronRotateStyle();
     const subtitle = this.renderSubtitle();
+    const title = (
+      <View>
+        <View style={{flexDirection:'row'}}>
+          <View style={{width:200}}>
+            <Text style={{fontWeight:'bold'}}>{item.home_fname}</Text>
+            <Text style={{fontSize:12,color:'gray'}}>{item.home_wins} - {item.home_loss}</Text>
+          </View>
+          <Text style={{fontSize:20}}>{item.home_team_runs}</Text>
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <View style={{width:200}}>
+            <Text style={{fontWeight:'bold'}}>{item.away_fname}</Text>
+            <Text style={{fontSize:12,color:'gray'}}>{item.away_wins} - {item.away_loss}</Text>
+          </View>
+          <Text style={{fontSize:20}}>{item.away_team_runs}</Text>
+        </View>
+      </View>
+    );
     return(
-      <ListItem key={item.key} title={title} onPress={this.onListItemPress} rightIcon={<AnimatedIcon name='chevron-right' size={30} color='gray' style={[chevronStyle,{alignSelf:'flex-start'}]}/>} subtitle={subtitle}/>
+      <ListItem key={item.key} title={title} onPress={() => this.onListItemPress(item)} rightIcon={<AnimatedIcon name='chevron-right' size={30} color='gray' style={[chevronStyle,{alignSelf:'flex-start'}]}/>} subtitle={subtitle}/>
     )
   }
   render(){

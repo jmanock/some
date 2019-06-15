@@ -24,6 +24,47 @@ export default class MLBGameDayApi{
         return Promise.resolve(urls);
       });
   }
+  static getGameData(gameURL){
+    const url = `${MLBGameDayApi.BaseURL}${gameURL}/boxscore.json`;
+    return fetch(url)
+      .then(function(response){return response.json();})
+      .then(function(data){
+        if(!data || !data.data || !data.data.boxscore || !data.data.boxscore.linescore){
+          return Promise.resolve(null);
+        }
+        
+        var awayTeamName = data.data.boxscore['away_fname'];
+        var homeTeamName = data.data.boxscore['home_fname'];
+        var homeTeamRuns = data.data.boxscore.linescore['home_team_runs'];
+        var awayTeamRuns = data.data.boxscore.linescore['away_team_runs'];
+        var awayWins = data.data.boxscore['away_wins'];
+        var awayLosses = data.data.boxscore['away_loss'];
+        var homeWins = data.data.boxscore['home_wins'];
+        var homeLosses = data.data.boxscore['home_loss'];
+
+        var obj = {
+          key:gameURL,
+          home_team_runs:homeTeamRuns,
+          away_team_runs:awayTeamRuns,
+          home_fname:homeTeamName,
+          away_fname:awayTeamName,
+          home_wins:homeWins,
+          away_wins:awayWins,
+          home_loss:homeLosses,
+          away_loss:awayLosses
+        };
+        return Promise.resolve(obj);
+      });
+  }
+  static getAllGameDataForDay(year,month,day){
+    return MLBGameDayApi.getListOfGamesForDay(year,month,day)
+      .then(function(dayGames){
+        const gameDataPromises = dayGames.map(function(dayGame){
+          return MLBGameDayApi.getGameData(dayGame.url);
+        });
+        return Promise.all(gameDataPromises);
+      });
+  }
   static parseXML(xmlText){
     var xml = new XMLParser().parseFromString(xmlText);
     return Promise.resolve(xml);
