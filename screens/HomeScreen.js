@@ -13,8 +13,11 @@ export default class HomeScreen extends Component{
     this.state = {
       isLoading:false,
       date:new Date(),
-      games:[]
-    }
+      games:[],
+      isExpanded:false
+    };
+    this.chevronRotation = new Animated.Value(0);
+    this.listItemHeight = new Animated.Value(0);
   }
   componentDidMount(){
     this.getGamesForDay();
@@ -33,10 +36,37 @@ export default class HomeScreen extends Component{
     this.setState({date});
     this.getGamesForDay();
   }
+  onListItemPress = () =>{
+    var chevronToValue = (this.state.isExpanded) ? 0 : 1;
+    Animated.timing(this.chevronRotation, {
+      toValue:chevronToValue, duration:200
+    }).start();
+    var heightToValue = (this.state.isExpanded) ? 0 : 100;
+    Animated.timing(this.listItemHeight, {
+      toValue:heightToValue,duration:200
+    }).start();
+    this.setState({isExpanded:!this.state.isExpanded});
+  }
+  getChevronRotateStyle = () =>{
+    const rotate = this.chevronRotation.interpolate({
+      inputRange:[0,1],
+      outputRange:['0deg','90deg']
+    });
+    return {transform:[{rotate:rotate}]};
+  }
+  renderSubtitle = () =>{
+    return(
+      <Animated.View style={{alignItems:'center', paddingVertical:10,height:this.listItemHeight}}>
+        <Text>Subtitle</Text>
+      </Animated.View>
+    )
+  }
   renderListItem = ({item}) =>{
     var title = `${item.awayTeam} @ ${item.homeTeam}`;
+    const chevronStyle = this.getChevronRotateStyle();
+    const subtitle = this.renderSubtitle();
     return(
-      <ListItem key={item.key} title={title} />
+      <ListItem key={item.key} title={title} onPress={this.onListItemPress} rightIcon={<AnimatedIcon name='chevron-right' size={30} color='gray' style={[chevronStyle,{alignSelf:'flex-start'}]}/>} subtitle={subtitle}/>
     )
   }
   render(){
