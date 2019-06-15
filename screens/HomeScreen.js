@@ -27,7 +27,6 @@ export default class HomeScreen extends Component{
     var year = this.state.date.getFullYear();
     var month = this.state.date.getMonth() + 1;
     var day = this.state.date.getDate();
-
     MLBGameDayApi.getAllGameDataForDay(year,month,day).then(function(data){
       this.setState({games:data});
       this.setState({isLoading:false})
