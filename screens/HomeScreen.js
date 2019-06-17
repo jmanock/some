@@ -62,9 +62,27 @@ export default class HomeScreen extends Component{
     );
   }
   renderListItem = ({item}) =>{
-    var title = `${item.away_fname} @ ${item.home_fname}`;
     const subtitle = this.renderSubtitle();
     const chevronStyle = this.getChevronRotateStyle();
+    const title = (
+      <View>
+        <Text>{item.time}</Text>
+        <View style={styles.holder}>
+          <View style={styles.width}>
+            <Text style={styles.team}>{item.away_fname}</Text>
+            <Text style={styles.winsLoss}>{item.away_wins} - {item.away_loss}</Text>
+          </View>
+          <Text style={styles.runs}>{item.away_team_runs}</Text>
+        </View>
+        <View style={styles.holder}>
+          <View style={styles.width}>
+            <Text style={styles.team}>{item.home_fname}</Text>
+            <Text style={styles.winsLoss}>{item.home_wins} - {item.home_loss}</Text>
+          </View>
+          <Text style={styles.runs}>{item.home_team_runs}</Text>
+        </View>
+      </View>
+    )
     return(
       <ListItem key={item.key} title={title} subtitle={subtitle} onPress={this.onListItemPress} rightIcon={
           <AnimatedIcon name='chevron-right' size={30} color='orange' style={[chevronStyle],{alignSelf:'flex-start'}}/>
@@ -90,5 +108,21 @@ const styles = StyleSheet.create({
   container:{
     flex:1,
     backgroundColor:'#fff'
+  },
+  holder:{
+    flexDirection:'row'
+  },
+  width:{
+    width:200
+  },
+  team:{
+    fontWeight:'bold'
+  },
+  winsLoss:{
+    fontSize:12,
+    color:'gray'
+  },
+  runs:{
+    fontSize:12
   }
 });

@@ -15,11 +15,7 @@ export default class MLBGameDayApi{
         var games = data.getElementsByTagName('game');
         var urls = games.map(function(game){
           var url = game.attributes['game_data_directory'];
-          var awayTeamID = game.attributes['away_file_code'];
-          var homeTeamID = game.attributes['home_file_code'];
-          var homeTeamName = game.attributes['home_team_name'];
-          var awayTeamName = game.attributes['away_team_name'];
-          return {url:url, key:url, homeTeamId:homeTeamID,awayTeamId:awayTeamID,homeTeam:homeTeamName,awayTeam:awayTeamName};
+          return {url:url, key:url};
         });
         return Promise.resolve(urls);
       });
@@ -29,24 +25,48 @@ export default class MLBGameDayApi{
     return fetch(url)
       .then(function(response){return response.json();})
       .then(function(data){
-        // if(!data || !data.data || !data.data.boxscore || !data.data.boxscore.linescore){
-        //   return Promise.resolve(null);
-        // }
+        if(!data || !data.data || !data.data.game){
+          return Promise.resolve(null);
+        }
+        // Need to remove time if started or ended
+        // Need to put the date in the games to check if its past or future
+        // Need to add or remove runs if not started
 
+        var gameDate = data.data.game['original_date'];
         var awayTeamCity = data.data.game['away_team_city'];
         var homeTeamCity = data.data.game['home_team_city'];
         var awayTeamMName = data.data.game['away_team_name'];
         var homeTeamMName = data.data.game['home_team_name'];
         var homeTeamName = homeTeamCity+' ' + homeTeamMName;
         var awayTeamName = awayTeamCity +' '+ awayTeamMName;
-        var gameTime = data.data.game['time'];
+        var GameTime = data.data.game['time'];
         var homeTeamRuns = data.data.game['home_team_runs'];
         var awayTeamRuns = data.data.game['away_team_runs'];
         var homeWins = data.data.game['home_win'];
         var homeLosses = data.data.game['home_loss'];
         var awayWins = data.data.game['away_win'];
         var awayLosses = data.data.game['away_loss'];
-        console.log(gameTime, homeTeamName, awayTeamName);
+        var gameTime = (GameTime < 12) ? GameTime + ' am' : GameTime + ' pm';
+        var time = new Date().toLocaleTimeString();
+        var day = new Date().getDate();
+        var month = new Date().getMonth() + 1;
+        var year = new Date().getFullYear();
+        if(month < 10){
+          month = '0'+month
+        }
+        if(day < 10){
+          day = '0'+day
+        }
+        var date = `${year}/${month}/${day}`;
+        if (gameDate > date){
+          // works for future games
+        }
+        if(gameTime > time){
+          // Only works with time need to check date
+          homeTeamRuns = '-';
+          awayTeamRuns = '-';
+        }
+
         var obj = {
           key:gameURL,
           home_team_runs:homeTeamRuns,
