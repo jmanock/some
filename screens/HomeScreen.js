@@ -20,13 +20,13 @@ export default class HomeScreen extends Component{
     this.listItemHeight = new Animated.Value(0);
   }
   componentDidMount(){
-    this.getGamesForDay();
+    this.getGamesForDay(this.state.date);
   }
-  getGamesForDay = () =>{
+  getGamesForDay = (date) =>{
     this.setState({isLoading:true});
-    var year = this.state.date.getFullYear();
-    var month = this.state.date.getMonth() + 1;
-    var day = this.state.date.getDate();
+    var year = date.getFullYear();
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
     MLBGameDayApi.getAllGameDataForDay(year,month,day).then(function(data){
       this.setState({games:data});
       this.setState({isLoading:false})
@@ -34,57 +34,41 @@ export default class HomeScreen extends Component{
   }
   onDateChange = date => {
     this.setState({date});
-    this.getGamesForDay();
+    this.getGamesForDay(date);
   }
   onListItemPress = (item) =>{
-    MLBGameDayApi.getGameData(item.url);
     var chevronToValue = (this.state.isExpanded) ? 0 : 1;
-    Animated.timing(this.chevronRotation, {
-      toValue:chevronToValue, duration:200
+    Animated.timing(this.chevronRotation,{
+      toValue:chevronToValue, duration:300
     }).start();
     var heightToValue = (this.state.isExpanded) ? 0 : 100;
-    Animated.timing(this.listItemHeight, {
-      toValue:heightToValue,duration:200
+    Animated.timing(this.listItemHeight,{
+      toValue:heightToValue, duration:300
     }).start();
     this.setState({isExpanded:!this.state.isExpanded});
   }
   getChevronRotateStyle = () =>{
     const rotate = this.chevronRotation.interpolate({
       inputRange:[0,1],
-      outputRange:['0deg','90deg']
+      outputRange:['0deg','95deg']
     });
-    return {transform:[{rotate:rotate}]};
+    return{transform:[{rotate:rotate}]};
   }
   renderSubtitle = () =>{
     return(
-      <Animated.View style={{alignItems:'center', paddingVertical:10,height:this.listItemHeight}}>
-        <Text>Subtitle</Text>
+      <Animated.View style={{height:this.listItemHeight,alignItems:'center',paddingVertical:10}}>
+        <Text>HelloFriend</Text>
       </Animated.View>
-    )
+    );
   }
   renderListItem = ({item}) =>{
-    const chevronStyle = this.getChevronRotateStyle();
+    var title = `${item.away_fname} @ ${item.home_fname}`;
     const subtitle = this.renderSubtitle();
-    const title = (
-      <View>
-        <View style={{flexDirection:'row'}}>
-          <View style={{width:200}}>
-            <Text style={{fontWeight:'bold'}}>{item.home_fname}</Text>
-            <Text style={{fontSize:12,color:'gray'}}>{item.home_wins} - {item.home_loss}</Text>
-          </View>
-          <Text style={{fontSize:20}}>{item.home_team_runs}</Text>
-        </View>
-        <View style={{flexDirection:'row'}}>
-          <View style={{width:200}}>
-            <Text style={{fontWeight:'bold'}}>{item.away_fname}</Text>
-            <Text style={{fontSize:12,color:'gray'}}>{item.away_wins} - {item.away_loss}</Text>
-          </View>
-          <Text style={{fontSize:20}}>{item.away_team_runs}</Text>
-        </View>
-      </View>
-    );
+    const chevronStyle = this.getChevronRotateStyle();
     return(
-      <ListItem key={item.key} title={title} onPress={() => this.onListItemPress(item)} rightIcon={<AnimatedIcon name='chevron-right' size={30} color='gray' style={[chevronStyle,{alignSelf:'flex-start'}]}/>} subtitle={subtitle}/>
+      <ListItem key={item.key} title={title} subtitle={subtitle} onPress={this.onListItemPress} rightIcon={
+          <AnimatedIcon name='chevron-right' size={30} color='orange' style={chevronStyle}/>
+        }/>
     )
   }
   render(){

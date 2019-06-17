@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import {ScrollView, View, StyleSheet, Text, FlatList, Button, ActivityIndicator, Animated} from 'react-native';
 import {ListItem} from 'react-native-elements';
 import {MaterialCommunityIcons as Icon} from 'react-native-vector-icons';
-import testMlbGameDayApi from './../api/testMlbGameDayApi';
+import MLBGameDayApi from './../api/MLBGameDayApi';
 import {DateBar} from '../components/app';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
@@ -28,8 +28,8 @@ export default class LinksScreen extends Component{
     var day = date.getDate();
     var year = date.getFullYear();
     var month = date.getMonth() +1;
-    
-    testMlbGameDayApi.getAllGameDataForDay(year,month,day).then(function(data){
+
+    MLBGameDayApi.getAllGameDataForDay(year,month,day).then(function(data){
       this.setState({games:data});
       this.setState({isLoading:false})
     }.bind(this))
@@ -39,7 +39,7 @@ export default class LinksScreen extends Component{
     this.getGamesForDay(date);
   }
   onListItemPress = (item) =>{
-    testMlbGameDayApi.getGameData(item.url);
+    MLBGameDayApi.getGameData(item.url);
     var chevronToValue = (this.state.isExpanded) ? 0 : 1;
     Animated.timing(this.chevronRotation, {
       toValue:chevronToValue, duration:200
