@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {MaterialCommunityIcons as Icon} from 'react-native-vector-icons';
 
-export default class DateBar extends Component{
+export default class testDateBar extends Component{
   static defaultProps = {
     data:new Date(),
     onDateChange:function(date){}
@@ -19,6 +19,7 @@ export default class DateBar extends Component{
   onLeftArrowPress = () =>{
     var newDate = new Date(this.state.date);
     newDate.setDate(newDate.getDate() -1);
+    this.setState({date:newDate});
     this.props.onDateChange(newDate);
   }
   onRightArrowPress = () =>{
@@ -38,7 +39,7 @@ export default class DateBar extends Component{
           <Icon name='chevron-right' style={styles.icon} />
         </TouchableOpacity>
       </View>
-    );
+    )
   }
 }
 
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   container:{
     flexDirection:'row',
     justifyContent:'space-between',
-    backgroundColor:'#dddddd',
+    backgroundColor:'#ddd',
     paddingVertical:10
   },
   date:{
