@@ -25,23 +25,28 @@ export default class MLBGameDayApi{
       });
   }
   static getGameData(gameURL){
-    const url = `${MLBGameDayApi.BaseURL}${gameURL}/boxscore.json`;
+    const url = `${MLBGameDayApi.BaseURL}${gameURL}/linescore.json`;
     return fetch(url)
       .then(function(response){return response.json();})
       .then(function(data){
-        if(!data || !data.data || !data.data.boxscore || !data.data.boxscore.linescore){
-          return Promise.resolve(null);
-        }
-        
-        var awayTeamName = data.data.boxscore['away_fname'];
-        var homeTeamName = data.data.boxscore['home_fname'];
-        var homeTeamRuns = data.data.boxscore.linescore['home_team_runs'];
-        var awayTeamRuns = data.data.boxscore.linescore['away_team_runs'];
-        var awayWins = data.data.boxscore['away_wins'];
-        var awayLosses = data.data.boxscore['away_loss'];
-        var homeWins = data.data.boxscore['home_wins'];
-        var homeLosses = data.data.boxscore['home_loss'];
+        // if(!data || !data.data || !data.data.boxscore || !data.data.boxscore.linescore){
+        //   return Promise.resolve(null);
+        // }
 
+        var awayTeamCity = data.data.game['away_team_city'];
+        var homeTeamCity = data.data.game['home_team_city'];
+        var awayTeamMName = data.data.game['away_team_name'];
+        var homeTeamMName = data.data.game['home_team_name'];
+        var homeTeamName = homeTeamCity+' ' + homeTeamMName;
+        var awayTeamName = awayTeamCity +' '+ awayTeamMName;
+        var gameTime = data.data.game['time'];
+        var homeTeamRuns = data.data.game['home_team_runs'];
+        var awayTeamRuns = data.data.game['away_team_runs'];
+        var homeWins = data.data.game['home_win'];
+        var homeLosses = data.data.game['home_loss'];
+        var awayWins = data.data.game['away_win'];
+        var awayLosses = data.data.game['away_loss'];
+        console.log(gameTime, homeTeamName, awayTeamName);
         var obj = {
           key:gameURL,
           home_team_runs:homeTeamRuns,
@@ -51,7 +56,8 @@ export default class MLBGameDayApi{
           home_wins:homeWins,
           away_wins:awayWins,
           home_loss:homeLosses,
-          away_loss:awayLosses
+          away_loss:awayLosses,
+          time:gameTime
         };
         return Promise.resolve(obj);
       });

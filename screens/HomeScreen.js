@@ -67,7 +67,7 @@ export default class HomeScreen extends Component{
     const chevronStyle = this.getChevronRotateStyle();
     return(
       <ListItem key={item.key} title={title} subtitle={subtitle} onPress={this.onListItemPress} rightIcon={
-          <AnimatedIcon name='chevron-right' size={30} color='orange' style={chevronStyle}/>
+          <AnimatedIcon name='chevron-right' size={30} color='orange' style={[chevronStyle],{alignSelf:'flex-start'}}/>
         }/>
     )
   }
