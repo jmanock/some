@@ -46,11 +46,11 @@ export default class MLBGameDayApi{
         var homeLosses = data.data.game['home_loss'];
         var awayWins = data.data.game['away_win'];
         var awayLosses = data.data.game['away_loss'];
-        var gameTime = (GameTime < 12) ? GameTime + ' am' : GameTime + ' pm';
-        var time = new Date().toLocaleTimeString();
+        var gameTime = (GameTime < 12) ? GameTime + ' AM' : GameTime + ' PM';
         var day = new Date().getDate();
         var month = new Date().getMonth() + 1;
         var year = new Date().getFullYear();
+
         if(month < 10){
           month = '0'+month
         }
@@ -58,15 +58,14 @@ export default class MLBGameDayApi{
           day = '0'+day
         }
         var date = `${year}/${month}/${day}`;
-        if (gameDate > date){
-          // works for future games
+        if (gameDate < date){
+          // Past Games no need for time
+          gameTime = '';
         }
-        if(gameTime > time){
-          // Only works with time need to check date
+        if(gameDate >= date){
           homeTeamRuns = '-';
           awayTeamRuns = '-';
         }
-
         var obj = {
           key:gameURL,
           home_team_runs:homeTeamRuns,

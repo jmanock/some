@@ -110,13 +110,13 @@ const styles = StyleSheet.create({
     backgroundColor:'#fff'
   },
   holder:{
-    flexDirection:'row'
+    flexDirection:'row',
   },
   width:{
-    width:200
+    width:200,
   },
   team:{
-    fontWeight:'bold'
+    fontWeight:'bold',
   },
   winsLoss:{
     fontSize:12,
