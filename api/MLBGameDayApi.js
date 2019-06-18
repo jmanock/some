@@ -28,9 +28,6 @@ export default class MLBGameDayApi{
         if(!data || !data.data || !data.data.game){
           return Promise.resolve(null);
         }
-        // Need to remove time if started or ended
-        // Need to put the date in the games to check if its past or future
-        // Need to add or remove runs if not started
 
         var gameDate = data.data.game['original_date'];
         var awayTeamCity = data.data.game['away_team_city'];
@@ -82,9 +79,9 @@ export default class MLBGameDayApi{
         return Promise.resolve(obj);
       });
   }
+
   static getVData(gameUrl){
     const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
-    console.log(url);
   }
   static getVideoData(gameUrl){
     const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
