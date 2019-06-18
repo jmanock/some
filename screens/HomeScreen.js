@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
-import {ScrollView, View, StyleSheet, Text, FlatList, Button, ActivityIndicator, Animated} from 'react-native';
+import {ScrollView, View, StyleSheet, Text, FlatList, Button, Animated} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {ListItem} from 'react-native-elements';
 import {MaterialCommunityIcons as Icon} from 'react-native-vector-icons';
 import MLBGameDayApi from './../api/MLBGameDayApi';
@@ -54,15 +55,19 @@ export default class HomeScreen extends Component{
     });
     return{transform:[{rotate:rotate}]};
   }
-  renderSubtitle = () =>{
+  onVideosPress = (item) =>{
+    this.props.navigation.navigate('Videos',{item:item});
+  }
+  renderSubtitle = (item) =>{
     return(
       <Animated.View style={{height:this.listItemHeight,alignItems:'center',paddingVertical:10}}>
-        <Text>HelloFriend</Text>
+
+        <Button title='Go to videos' onPress={() =>this.onVideosPress(item)} />
       </Animated.View>
     );
   }
   renderListItem = ({item}) =>{
-    const subtitle = this.renderSubtitle();
+    const subtitle = this.renderSubtitle(item);
     const chevronStyle = this.getChevronRotateStyle();
     const title = (
       <View>
@@ -90,12 +95,10 @@ export default class HomeScreen extends Component{
     )
   }
   render(){
-    if(this.state.isLoading){
-      return <ActivityIndicator animation={true} size='large' style={{paddingTop:50}} />
-    }
     return(
       <ScrollView style={styles.container}>
         <DateBar onDateChange={this.onDateChange} date={this.state.date} />
+        <Spinner visible={this.state.isLoading} textContent={'Loadingz'} textStyle={styles.spinnerTextStyle} />
         <FlatList data={this.state.games} renderItem={this.renderListItem} />
       </ScrollView>
     )
@@ -123,6 +126,9 @@ const styles = StyleSheet.create({
     color:'gray'
   },
   runs:{
-    fontSize:12
+    fontSize:16
+  },
+  spinnerTextStyle:{
+    color:'#333',
   }
 });

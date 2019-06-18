@@ -68,6 +68,7 @@ export default class MLBGameDayApi{
         }
         var obj = {
           key:gameURL,
+          url:gameURL,
           home_team_runs:homeTeamRuns,
           away_team_runs:awayTeamRuns,
           home_fname:homeTeamName,
@@ -79,6 +80,24 @@ export default class MLBGameDayApi{
           time:gameTime
         };
         return Promise.resolve(obj);
+      });
+  }
+  static getVData(gameUrl){
+    const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
+    console.log(url);
+  }
+  static getVideoData(gameUrl){
+    const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
+    return fetch(url)
+      .then(function(response){return response.text();})
+      .then(function(text){return MLBGameDayApi.parseXML(text);})
+      .then(function(data){
+        var media = data.getElementsByTagName('media');
+        media = media.filter(function(m){return m.attributes['type'] == 'video';});
+        var ids = media.map(function(m){
+           return m.attributes['id'];
+        });
+        return Promise.resolve(ids);
       });
   }
   static getAllGameDataForDay(year,month,day){
