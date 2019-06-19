@@ -25,10 +25,12 @@ export default class MLBGameDayApi{
     return fetch(url)
       .then(function(response){return response.json();})
       .then(function(data){
+
         if(!data || !data.data || !data.data.game){
           return Promise.resolve(null);
         }
-
+        // Can't get video next best thing would be innings data
+        var lineScore = data.data.game.linescore;
         var gameDate = data.data.game['original_date'];
         var awayTeamCity = data.data.game['away_team_city'];
         var homeTeamCity = data.data.game['home_team_city'];
@@ -47,7 +49,7 @@ export default class MLBGameDayApi{
         var day = new Date().getDate();
         var month = new Date().getMonth() + 1;
         var year = new Date().getFullYear();
-
+        console.log(lineScore);
         if(month < 10){
           month = '0'+month
         }
@@ -56,7 +58,6 @@ export default class MLBGameDayApi{
         }
         var date = `${year}/${month}/${day}`;
         if (gameDate < date){
-          // Past Games no need for time
           gameTime = '';
         }
         if(gameDate >= date){
@@ -77,24 +78,6 @@ export default class MLBGameDayApi{
           time:gameTime
         };
         return Promise.resolve(obj);
-      });
-  }
-
-  static getVData(gameUrl){
-    const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
-  }
-  static getVideoData(gameUrl){
-    const url = `${MLBGameDayApi.BaseURL}${gameUrl}/media/mobile.xml`;
-    return fetch(url)
-      .then(function(response){return response.text();})
-      .then(function(text){return MLBGameDayApi.parseXML(text);})
-      .then(function(data){
-        var media = data.getElementsByTagName('media');
-        media = media.filter(function(m){return m.attributes['type'] == 'video';});
-        var ids = media.map(function(m){
-           return m.attributes['id'];
-        });
-        return Promise.resolve(ids);
       });
   }
   static getAllGameDataForDay(year,month,day){

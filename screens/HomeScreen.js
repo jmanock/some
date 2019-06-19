@@ -60,9 +60,7 @@ export default class HomeScreen extends Component{
   }
   renderSubtitle = (item) =>{
     return(
-      <Animated.View style={{height:this.listItemHeight,alignItems:'center',paddingVertical:10}}>
-
-        <Button title='Go to videos' onPress={() =>this.onVideosPress(item)} />
+      <Animated.View style={{height:this.listItemHeight,paddingVertical:20}}>
       </Animated.View>
     );
   }
@@ -130,5 +128,8 @@ const styles = StyleSheet.create({
   },
   spinnerTextStyle:{
     color:'#333',
+  },
+  links:{
+
   }
 });
