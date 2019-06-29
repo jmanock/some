@@ -17,6 +17,7 @@ export default class MLBGameDayApi{
           var url = game.attributes['game_data_directory'];
           return {url:url, key:url};
         });
+        console.log(urls);
         return Promise.resolve(urls);
       });
   }
@@ -49,7 +50,7 @@ export default class MLBGameDayApi{
         var day = new Date().getDate();
         var month = new Date().getMonth() + 1;
         var year = new Date().getFullYear();
-        console.log(lineScore);
+
         if(month < 10){
           month = '0'+month
         }
