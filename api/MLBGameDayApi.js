@@ -17,7 +17,6 @@ export default class MLBGameDayApi{
           var url = game.attributes['game_data_directory'];
           return {url:url, key:url};
         });
-        console.log(urls);
         return Promise.resolve(urls);
       });
   }
